@@ -25,7 +25,7 @@ const Login: React.FC = () => {
 
     try {
       if (isRegister) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -35,13 +35,9 @@ const Login: React.FC = () => {
           },
         });
         if (error) throw error;
-        // Auto sign-in or wait for confirmation depending on config. 
-        // Assuming default config might require email confirmation, but usually for dev local it's off or we see.
-        // If email confirmation is on, we might need to tell user to check email.
-        // For now assuming it logs in or we just show "Check email".
-        // But to make it seamless for demo:
-        // Ideally we should alert.
-        alert('Registration successful! Please check your email to verify your account.');
+        if (!data.session) {
+          alert('Registration successful! Please check your email to verify your account.');
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -53,6 +49,20 @@ const Login: React.FC = () => {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
@@ -163,11 +173,19 @@ const Login: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <button className="h-14 bg-white border border-gray-100 rounded-2xl flex items-center justify-center gap-2 text-slate-600 font-bold active:scale-95 transition-transform">
+          <button
+            type="button"
+            onClick={() => handleSocialLogin('google')}
+            className="h-14 bg-white border border-gray-100 rounded-2xl flex items-center justify-center gap-2 text-slate-600 font-bold active:scale-95 transition-transform"
+          >
             <img src="https://www.svgrepo.com/show/303108/google-icon-logo.svg" className="size-5" alt="Google" />
             Google
           </button>
-          <button className="h-14 bg-white border border-gray-100 rounded-2xl flex items-center justify-center gap-2 text-slate-600 font-bold active:scale-95 transition-transform">
+          <button
+            type="button"
+            onClick={() => handleSocialLogin('facebook')}
+            className="h-14 bg-white border border-gray-100 rounded-2xl flex items-center justify-center gap-2 text-slate-600 font-bold active:scale-95 transition-transform"
+          >
             <img src="https://www.svgrepo.com/show/303114/facebook-3-logo.svg" className="size-5" alt="FB" />
             Facebook
           </button>
