@@ -31,6 +31,7 @@ CREATE TABLE pets (
   weight TEXT,
   location TEXT,
   description TEXT,
+  status TEXT CHECK (status IN ('Available', 'Adopted')) DEFAULT 'Available',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

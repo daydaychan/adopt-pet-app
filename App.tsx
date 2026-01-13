@@ -15,6 +15,9 @@ import Appointments from './pages/Appointments';
 import AiMatches from './pages/AiMatches';
 import Intro from './pages/Intro';
 import Login from './pages/Login';
+import AdminLayout from './admin/AdminLayout';
+import Dashboard from './admin/Dashboard';
+import AddPet from './admin/AddPet';
 import { Pet, AdoptionApplication } from './types';
 import { supabase } from './lib/supabase';
 import { getPets, getMyApplications, submitApplication, updateApplication, togglePetFavorite } from './lib/api';
@@ -160,35 +163,46 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="mx-auto max-w-[480px] min-h-screen bg-white shadow-2xl relative overflow-x-hidden">
-        <Routes>
-          {!session ? (
-            <>
-              <Route path="/intro" element={<Intro />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="*" element={<Navigate to="/intro" replace />} />
-            </>
-          ) : (
-            <>
-              <Route path="/" element={<Home pets={pets} onToggleFavorite={toggleFavorite} />} />
-              <Route path="/pet/:id" element={<PetDetails pets={pets} onToggleFavorite={toggleFavorite} />} />
-              <Route path="/favorites" element={<Favorites pets={pets} onToggleFavorite={toggleFavorite} />} />
-              <Route path="/appointments" element={<Appointments />} />
-              <Route path="/ai-match" element={<AiMatches pets={pets} onToggleFavorite={toggleFavorite} />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/profile" element={<Profile applicationCount={applications.length} onLogout={() => supabase.auth.signOut()} />} />
-              <Route path="/profile/info" element={<PersonalInfo />} />
-              <Route path="/profile/applications" element={<MyApplications applications={applications} />} />
-              <Route path="/application/:id" element={<ApplicationDetails applications={applications} />} />
-              <Route path="/profile/volunteer" element={<VolunteerInfo />} />
-              <Route path="/apply/:id" element={<ApplicationForm pets={pets} onApply={handleApply} />} />
-              <Route path="/edit-application/:appId" element={<ApplicationForm pets={pets} applications={applications} onUpdate={handleUpdateApplication} />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </>
-          )}
-        </Routes>
-        {session && <BottomNav />}
-      </div>
+      <Routes>
+        {/* Admin Module - Full Screen PC Layout */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="add" element={<AddPet />} />
+        </Route>
+
+        {/* Mobile Application - Phone Layout */}
+        <Route path="*" element={
+          <div className="mx-auto max-w-[480px] min-h-screen bg-white shadow-2xl relative overflow-x-hidden">
+            <Routes>
+              {!session ? (
+                <>
+                  <Route path="/intro" element={<Intro />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="*" element={<Navigate to="/intro" replace />} />
+                </>
+              ) : (
+                <>
+                  <Route path="/" element={<Home pets={pets} onToggleFavorite={toggleFavorite} />} />
+                  <Route path="/pet/:id" element={<PetDetails pets={pets} onToggleFavorite={toggleFavorite} />} />
+                  <Route path="/favorites" element={<Favorites pets={pets} onToggleFavorite={toggleFavorite} />} />
+                  <Route path="/appointments" element={<Appointments />} />
+                  <Route path="/ai-match" element={<AiMatches pets={pets} onToggleFavorite={toggleFavorite} />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/profile" element={<Profile applicationCount={applications.length} onLogout={() => supabase.auth.signOut()} />} />
+                  <Route path="/profile/info" element={<PersonalInfo />} />
+                  <Route path="/profile/applications" element={<MyApplications applications={applications} />} />
+                  <Route path="/application/:id" element={<ApplicationDetails applications={applications} />} />
+                  <Route path="/profile/volunteer" element={<VolunteerInfo />} />
+                  <Route path="/apply/:id" element={<ApplicationForm pets={pets} onApply={handleApply} />} />
+                  <Route path="/edit-application/:appId" element={<ApplicationForm pets={pets} applications={applications} onUpdate={handleUpdateApplication} />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </>
+              )}
+            </Routes>
+            {session && !location.pathname.startsWith('/admin') && <BottomNav />}
+          </div>
+        } />
+      </Routes>
     </Router>
   );
 };

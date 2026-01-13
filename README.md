@@ -102,3 +102,19 @@ supabase/
 -   **Row Level Security (RLS)** is enabled on all database tables.
 -   Users can only access/modify their own personal data (profiles, applications, favorites).
 -   Pet data is publicly readable.
+
+設計一個網上寵物領養應用程式
+
+backend promtp:
+Analyze this front-end code and complete the following tasks:
+1. Generate the corresponding back-end code for the front-end code, ensuring seamless communication between the front-end and back-end to create a fully integrated application.
+2. Use the Supabase database for data storage.
+
+UI promtp:
+For this application, we need to implement a PC-based backend management function with the following requirements:
+1. The UI style should be consistent with the existing app.
+2. It should be implemented as a separate module, without mixing with or modifying existing code.
+3. The functionalities include:
+- Adding pet information; images should be stored using Cloudflare R2. When a user uploads an image, it should be uploaded to Cloudflare R2, and the image URL should be returned.
+- Viewing all pet information.
+- Taking down adopted pets from the app, but not from the management backend.

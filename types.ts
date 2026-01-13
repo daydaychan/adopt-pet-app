@@ -13,6 +13,7 @@ export interface Pet {
   weight: string;
   location: string;
   description: string;
+  status: 'Available' | 'Adopted';
   isFavorite: boolean;
   aiMatchScore?: number;
   aiMatchReason?: string;

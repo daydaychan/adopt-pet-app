@@ -7,6 +7,7 @@ export async function getPets(userId?: string): Promise<Pet[]> {
     const { data: pets, error } = await supabase
         .from('pets')
         .select('*')
+        .eq('status', 'Available')
         .order('created_at', { ascending: false });
 
     if (error) {
