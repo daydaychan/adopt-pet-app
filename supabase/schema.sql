@@ -37,7 +37,7 @@ CREATE TABLE pets (
 -- 3. Create Applications Table
 CREATE TABLE applications (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  pet_id UUID REFERENCES pets(id),
+  pet_id TEXT REFERENCES pets(id),
   user_id UUID REFERENCES auth.users(id),
   pet_name TEXT, -- Denormalized for easier display
   pet_image TEXT, -- Denormalized for easier display
@@ -54,7 +54,7 @@ CREATE TABLE applications (
 -- 4. Create Favorites Table
 CREATE TABLE favorites (
   user_id UUID REFERENCES auth.users(id),
-  pet_id UUID REFERENCES pets(id),
+  pet_id TEXT REFERENCES pets(id),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   PRIMARY KEY (user_id, pet_id)
 );
