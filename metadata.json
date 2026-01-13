@@ -1,0 +1,9 @@
+
+{
+  "name": "Pet Discovery - Find Your New Best Friend",
+  "description": "A comprehensive pet adoption platform featuring discovery, detailed profiles, application management, and real-time messaging with shelters.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
