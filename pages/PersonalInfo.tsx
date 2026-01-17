@@ -2,32 +2,67 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const PersonalInfo: React.FC = () => {
+import { supabase } from '../lib/supabase';
+
+interface PersonalInfoProps {
+  user: any;
+}
+
+const PersonalInfo: React.FC<PersonalInfoProps> = ({ user }) => {
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
-    name: 'Jane Cooper',
-    email: 'jane.cooper@example.com',
-    phone: '+1 (555) 123-4567',
-    location: 'Los Angeles, California',
-    bio: 'Animal lover and outdoor enthusiast. Looking for a high-energy dog to join me on my weekend hikes!'
+    name: user?.user_metadata?.full_name || '',
+    email: user?.email || '',
+    phone: user?.user_metadata?.phone || '',
+    location: user?.user_metadata?.location || '',
+    bio: user?.user_metadata?.bio || ''
   });
 
-  const handleSave = () => {
+  // Update form data when user prop changes (e.g. on initial load if user was null)
+  React.useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.user_metadata?.full_name || '',
+        email: user.email || '',
+        phone: user.user_metadata?.phone || '',
+        location: user.user_metadata?.location || '',
+        bio: user.user_metadata?.bio || ''
+      });
+    }
+  }, [user]);
+
+  const handleSave = async () => {
     setIsSaving(true);
-    // Simulate API delay
-    setTimeout(() => {
-      setIsSaving(false);
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        email: formData.email, // Allow updating email if needed, though usually requires confirmation
+        data: {
+          full_name: formData.name,
+          phone: formData.phone,
+          location: formData.location,
+          bio: formData.bio
+        }
+      });
+
+      if (error) throw error;
+
       alert('Information updated successfully!');
       navigate('/profile');
-    }, 1000);
+    } catch (error: any) {
+      console.error('Error updating profile:', error);
+      alert(`Failed to update profile: ${error.message}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-white animate-slideInRight">
       <div className="sticky top-0 z-50 bg-white px-5 py-4 border-b border-gray-50 flex items-center">
-        <button 
-          onClick={() => navigate('/profile')} 
+        <button
+          onClick={() => navigate('/profile')}
           className="size-10 flex items-center justify-center bg-gray-50 rounded-xl transition-transform active:scale-90"
         >
           <span className="material-symbols-outlined text-slate-900">chevron_left</span>
@@ -39,9 +74,9 @@ const PersonalInfo: React.FC = () => {
         <div className="flex flex-col items-center mb-10">
           <div className="relative group">
             <div className="size-28 rounded-full overflow-hidden border-4 border-primary/20 p-1">
-              <img 
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200" 
-                alt="Profile" 
+              <img
+                src={user?.user_metadata?.avatar_url || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"}
+                alt="Profile"
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
@@ -62,11 +97,12 @@ const PersonalInfo: React.FC = () => {
               <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">{field.label}</label>
               <div className="relative">
                 <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">{field.icon}</span>
-                <input 
+                <input
                   type={field.type}
                   value={(formData as any)[field.id]}
-                  onChange={(e) => setFormData({...formData, [field.id]: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
                   className="w-full h-14 bg-background-light border-none rounded-2xl px-12 text-sm font-medium focus:ring-2 focus:ring-primary/50 transition-all outline-none"
+                  disabled={field.id === 'email'} // Disable email editing for simplicity now, or allow it but warn about verify workflow
                 />
               </div>
             </div>
@@ -74,10 +110,10 @@ const PersonalInfo: React.FC = () => {
 
           <div>
             <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">About Me</label>
-            <textarea 
+            <textarea
               rows={4}
               value={formData.bio}
-              onChange={(e) => setFormData({...formData, bio: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
               className="w-full bg-background-light border-none rounded-2xl p-4 text-sm font-medium focus:ring-2 focus:ring-primary/50 transition-all resize-none outline-none"
             />
           </div>
@@ -85,7 +121,7 @@ const PersonalInfo: React.FC = () => {
       </div>
 
       <div className="p-5">
-        <button 
+        <button
           onClick={handleSave}
           disabled={isSaving}
           className="w-full h-16 bg-primary text-slate-900 font-bold rounded-2xl shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2"

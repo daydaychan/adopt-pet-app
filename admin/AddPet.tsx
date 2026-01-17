@@ -72,7 +72,7 @@ const AddPet: React.FC = () => {
             navigate('/admin');
         } catch (error) {
             console.error(error);
-            alert('Failed to add pet. Please check console and R2 configuration.');
+            alert(`Failed to add pet: ${error.message}`);
         } finally {
             setIsLoading(false);
         }

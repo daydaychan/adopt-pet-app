@@ -41,6 +41,19 @@ const AdminLayout: React.FC = () => {
                         <span className="material-symbols-outlined mb-0.5">add_circle</span>
                         Add New Pet
                     </NavLink>
+
+                    <NavLink
+                        to="/admin/applications"
+                        className={({ isActive }) =>
+                            `flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${isActive
+                                ? 'bg-primary/10 text-primary'
+                                : 'text-gray-500 hover:bg-gray-50 hover:text-slate-800'
+                            }`
+                        }
+                    >
+                        <span className="material-symbols-outlined mb-0.5">assignment</span>
+                        Applications
+                    </NavLink>
                 </nav>
 
                 <div className="p-4 border-t border-gray-100">

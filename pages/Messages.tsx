@@ -124,8 +124,8 @@ const Messages: React.FC = () => {
           {selectedChat.messages.map((msg) => (
             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] px-4 py-3 rounded-2xl shadow-sm relative ${msg.sender === 'user'
-                  ? 'bg-slate-900 text-white rounded-tr-none'
-                  : 'bg-white text-slate-700 rounded-tl-none border border-gray-100'
+                ? 'bg-slate-900 text-white rounded-tr-none'
+                : 'bg-white text-slate-700 rounded-tl-none border border-gray-100'
                 }`}>
                 <p className="text-sm leading-relaxed">{msg.text}</p>
                 <span className={`text-[8px] font-bold mt-1 block opacity-50 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
@@ -173,13 +173,14 @@ const Messages: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-white animate-fadeIn">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md px-5 pt-4 pb-2 flex justify-between items-center">
-        <button className="size-10 flex items-center justify-center bg-background-light rounded-xl">
+        <button
+          onClick={() => navigate('/profile')}
+          className="size-10 flex items-center justify-center bg-background-light rounded-xl transition-transform active:scale-95"
+        >
           <span className="material-symbols-outlined">settings</span>
         </button>
         <h2 className="font-bold text-xl text-slate-900">Messages</h2>
-        <button className="size-10 flex items-center justify-center bg-background-light rounded-xl">
-          <span className="material-symbols-outlined">edit_square</span>
-        </button>
+        <div className="size-10"></div> {/* Spacer to keep title centered if needed, or just remove if flex-between handles it. Flex-between with 3 items centers middle if sides are equal. keeping spacer or empty div ensures alignment */}
       </header>
 
       {/* Search */}

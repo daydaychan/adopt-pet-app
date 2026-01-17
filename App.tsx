@@ -18,6 +18,8 @@ import Login from './pages/Login';
 import AdminLayout from './admin/AdminLayout';
 import Dashboard from './admin/Dashboard';
 import AddPet from './admin/AddPet';
+import Applications from './admin/Applications';
+import ApplicationDetail from './admin/ApplicationDetail';
 import { Pet, AdoptionApplication } from './types';
 import { supabase } from './lib/supabase';
 import { getPets, getMyApplications, submitApplication, updateApplication, togglePetFavorite } from './lib/api';
@@ -168,6 +170,8 @@ const App: React.FC = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="add" element={<AddPet />} />
+          <Route path="applications" element={<Applications />} />
+          <Route path="applications/:id" element={<ApplicationDetail />} />
         </Route>
 
         {/* Mobile Application - Phone Layout */}
@@ -188,8 +192,8 @@ const App: React.FC = () => {
                   <Route path="/appointments" element={<Appointments />} />
                   <Route path="/ai-match" element={<AiMatches pets={pets} onToggleFavorite={toggleFavorite} />} />
                   <Route path="/messages" element={<Messages />} />
-                  <Route path="/profile" element={<Profile applicationCount={applications.length} onLogout={() => supabase.auth.signOut()} />} />
-                  <Route path="/profile/info" element={<PersonalInfo />} />
+                  <Route path="/profile" element={<Profile applicationCount={applications.length} user={session.user} onLogout={() => supabase.auth.signOut()} />} />
+                  <Route path="/profile/info" element={<PersonalInfo user={session.user} />} />
                   <Route path="/profile/applications" element={<MyApplications applications={applications} />} />
                   <Route path="/application/:id" element={<ApplicationDetails applications={applications} />} />
                   <Route path="/profile/volunteer" element={<VolunteerInfo />} />

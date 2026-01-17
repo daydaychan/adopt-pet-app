@@ -35,11 +35,15 @@ export async function addPet(petData: NewPetData) {
 
     const id = crypto.randomUUID();
 
+    const { isNew, isUrgent, ...rest } = petData;
+
     const { data, error } = await supabase
         .from('pets')
         .insert({
             id,
-            ...petData,
+            ...rest,
+            is_new: isNew,
+            is_urgent: isUrgent,
             status: 'Available'
         })
         .select()
@@ -49,9 +53,40 @@ export async function addPet(petData: NewPetData) {
     return data;
 }
 
+
 export async function updatePetStatus(id: string, status: 'Available' | 'Adopted') {
     const { error } = await supabase
         .from('pets')
+        .update({ status })
+        .eq('id', id);
+
+    if (error) throw error;
+}
+
+// Applications
+import { AdoptionApplication } from '../../types';
+
+export async function getAdminApplications(): Promise<AdoptionApplication[]> {
+    const { data, error } = await supabase
+        .from('applications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching admin applications:', error);
+        return [];
+    }
+
+    // Transform fields if necessary to match frontend types
+    return data.map(app => ({
+        ...app,
+        date: new Date(app.created_at).toLocaleDateString()
+    })) as AdoptionApplication[];
+}
+
+export async function updateApplicationStatus(id: string, status: string) {
+    const { error } = await supabase
+        .from('applications')
         .update({ status })
         .eq('id', id);
 
